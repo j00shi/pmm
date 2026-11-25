@@ -106,18 +106,6 @@
         typedEl.textContent = '';
         outputEl.innerHTML = '';
 
-        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        if (reduceMotion) {
-          typedEl.textContent = scene.cmd;
-          scene.lines.forEach((line) => {
-            const div = document.createElement('div');
-            div.className = 'term-line visible';
-            div.innerHTML = line.html || '&nbsp;';
-            outputEl.appendChild(div);
-          });
-          return;
-        }
-
         for (let i = 0; i < scene.cmd.length; i++) {
           if (myRun !== runId) return;
           typedEl.textContent += scene.cmd[i];
@@ -132,7 +120,6 @@
           div.className = 'term-line';
           div.innerHTML = line.html || '&nbsp;';
           outputEl.appendChild(div);
-          requestAnimationFrame(() => div.classList.add('visible'));
         }
       }
 
@@ -294,15 +281,34 @@
   }
 
   .terminal-body :global(.term-line) {
-    opacity: 0;
-    transform: translateY(4px);
-    transition: opacity 0.22s ease, transform 0.22s ease;
     white-space: pre;
+    animation: termLineIn 0.22s ease both;
   }
 
-  .terminal-body :global(.term-line.visible) {
-    opacity: 1;
-    transform: translateY(0);
+  @keyframes termLineIn {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes termLineFade {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .terminal-body :global(.term-line) {
+      animation-name: termLineFade;
+    }
   }
 
   .terminal-body :global(.t-muted) {
