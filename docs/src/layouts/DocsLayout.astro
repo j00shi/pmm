@@ -1,0 +1,326 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import { docsNav, flatDocsNav, GITHUB_REPO } from '../data/nav';
+import { url, normalizePath } from '../utils/url';
+
+interface Props {
+  frontmatter: {
+    title: string;
+    description?: string;
+    file?: string;
+  };
+}
+
+const { frontmatter } = Astro.props;
+const currentPath = normalizePath(Astro.url.pathname);
+const currentIndex = flatDocsNav.findIndex((item) => item.href === currentPath);
+const prevPage = currentIndex > 0 ? flatDocsNav[currentIndex - 1] : null;
+const nextPage = currentIndex >= 0 && currentIndex < flatDocsNav.length - 1 ? flatDocsNav[currentIndex + 1] : null;
+---
+
+<BaseLayout
+  title={`${frontmatter.title} — PMM Docs`}
+  description={frontmatter.description}
+>
+  <div class="container docs-shell">
+    <aside class="docs-sidebar" aria-label="Documentation navigation">
+      <div class="sidebar-sticky">
+        {docsNav.map((section) => (
+          <div class="sidebar-group">
+            <h4 class="sidebar-heading">{section.title}</h4>
+            <ul class="sidebar-list">
+              {section.items.map((item) => {
+                const isActive = item.href === currentPath;
+                return (
+                  <li>
+                    <a
+                      href={url(item.href)}
+                      class:list={['sidebar-link', { active: isActive }]}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      {item.title}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </aside>
+
+    <article class="docs-content">
+      <div class="docs-mobile-nav">
+        <details>
+          <summary>Documentation Menu</summary>
+          <div class="mobile-nav-body">
+            {docsNav.map((section) => (
+              <div class="sidebar-group">
+                <h4 class="sidebar-heading">{section.title}</h4>
+                <ul class="sidebar-list">
+                  {section.items.map((item) => (
+                    <li>
+                      <a
+                        href={url(item.href)}
+                        class:list={['sidebar-link', { active: item.href === currentPath }]}
+                      >
+                        {item.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </details>
+      </div>
+
+      <div class="prose">
+        <header class="doc-header">
+          <h1>{frontmatter.title}</h1>
+          {frontmatter.description && <p class="doc-lead">{frontmatter.description}</p>}
+        </header>
+        <slot />
+      </div>
+
+      <div class="doc-footer">
+        <a
+          href={`${GITHUB_REPO}/tree/main/docs/src/pages${currentPath}.mdx`}
+          target="_blank"
+          rel="noopener noreferrer"
+          class="edit-link"
+        >
+          Edit this page on GitHub →
+        </a>
+
+        <nav class="pager" aria-label="Page navigation">
+          {prevPage ? (
+            <a href={url(prevPage.href)} class="pager-card">
+              <span class="pager-label">← Previous</span>
+              <span class="pager-title">{prevPage.title}</span>
+            </a>
+          ) : (
+            <div />
+          )}
+          {nextPage ? (
+            <a href={url(nextPage.href)} class="pager-card pager-next">
+              <span class="pager-label">Next →</span>
+              <span class="pager-title">{nextPage.title}</span>
+            </a>
+          ) : (
+            <div />
+          )}
+        </nav>
+      </div>
+    </article>
+  </div>
+
+  <!-- Automatically add copy buttons to all MDX code blocks -->
+  <script is:inline>
+    document.querySelectorAll('.prose pre.astro-code').forEach((pre) => {
+      if (pre.parentElement?.classList.contains('code-block-wrapper')) return;
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block-wrapper';
+      pre.parentNode?.insertBefore(wrapper, pre);
+      wrapper.appendChild(pre);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'code-copy-btn';
+      btn.textContent = 'Copy';
+      btn.addEventListener('click', async () => {
+        const text = pre.innerText || '';
+        try {
+          await navigator.clipboard.writeText(text.trim());
+          btn.textContent = 'Copied';
+          btn.setAttribute('data-copied', 'true');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.removeAttribute('data-copied');
+          }, 1800);
+        } catch {
+          btn.textContent = 'Error';
+        }
+      });
+      wrapper.appendChild(btn);
+    });
+  </script>
+</BaseLayout>
+
+<style>
+  .docs-shell {
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 3rem;
+    padding-top: 2.25rem;
+    padding-bottom: 2rem;
+  }
+
+  .docs-sidebar {
+    border-right: 1px solid var(--border);
+    padding-right: 1.5rem;
+  }
+
+  .sidebar-sticky {
+    position: sticky;
+    top: calc(var(--header-height) + 2rem);
+  }
+
+  .sidebar-group {
+    margin-bottom: 1.75rem;
+  }
+
+  .sidebar-heading {
+    margin: 0 0 0.55rem;
+    font-size: 0.74rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-muted);
+  }
+
+  .sidebar-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .sidebar-link {
+    display: block;
+    padding: 0.45rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    transition: background-color 0.15s ease, color 0.15s ease;
+  }
+
+  .sidebar-link:hover {
+    color: var(--text);
+    background: var(--bg-subtle);
+  }
+
+  .sidebar-link.active {
+    color: var(--accent);
+    background: var(--accent-soft);
+    font-weight: 600;
+  }
+
+  .docs-content {
+    min-width: 0;
+    max-width: 780px;
+  }
+
+  .doc-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .doc-lead {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin: 0.5rem 0 0 !important;
+  }
+
+  .docs-mobile-nav {
+    display: none;
+    margin-bottom: 1.5rem;
+  }
+
+  .docs-mobile-nav details {
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+  }
+
+  .docs-mobile-nav summary {
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .mobile-nav-body {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .doc-footer {
+    margin-top: 3.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .edit-link {
+    display: inline-block;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+  }
+
+  .edit-link:hover {
+    color: var(--accent);
+  }
+
+  .pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .pager-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem 1.15rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--bg-elevated);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .pager-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-1px);
+  }
+
+  .pager-next {
+    text-align: right;
+  }
+
+  .pager-label {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+
+  .pager-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+
+  @media (max-width: 860px) {
+    .docs-shell {
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+    }
+
+    .docs-sidebar {
+      display: none;
+    }
+
+    .docs-mobile-nav {
+      display: block;
+    }
+
+    .pager {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

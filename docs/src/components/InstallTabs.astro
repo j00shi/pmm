@@ -1,0 +1,276 @@
+---
+interface InstallOption {
+  id: string;
+  label: string;
+  manager: string;
+  command: string;
+  note?: string;
+}
+
+const options: InstallOption[] = [
+  {
+    id: 'windows',
+    label: 'Windows',
+    manager: 'winget',
+    command: 'winget install pmm',
+    note: 'Requires Windows Package Manager (winget) on Windows 10/11.',
+  },
+  {
+    id: 'macos',
+    label: 'macOS',
+    manager: 'Homebrew',
+    command: 'brew install pmm',
+    note: 'Works on Apple Silicon and Intel Macs via Homebrew.',
+  },
+  {
+    id: 'ubuntu',
+    label: 'Ubuntu / Debian',
+    manager: 'apt',
+    command: 'sudo apt install pmm',
+    note: 'For Debian, Ubuntu, Pop!_OS, and APT-based distributions.',
+  },
+  {
+    id: 'fedora',
+    label: 'Fedora / RHEL',
+    manager: 'dnf',
+    command: 'sudo dnf install pmm',
+    note: 'For Fedora, RHEL, Rocky Linux, and DNF-based distributions.',
+  },
+];
+---
+
+<div class="install-box" data-install-tabs>
+  <div class="install-tabs" role="tablist" aria-label="Operating system installation methods">
+    {options.map((opt, idx) => (
+      <button
+        type="button"
+        role="tab"
+        class:list={['install-tab', { active: idx === 0 }]}
+        aria-selected={idx === 0 ? 'true' : 'false'}
+        data-tab={opt.id}
+      >
+        <span>{opt.label}</span>
+        <span class="tab-pill">{opt.manager}</span>
+      </button>
+    ))}
+  </div>
+
+  <div class="install-panels">
+    {options.map((opt, idx) => (
+      <div
+        role="tabpanel"
+        class:list={['install-panel', { active: idx === 0 }]}
+        data-panel={opt.id}
+      >
+        <div class="cmd-row">
+          <code class="cmd-code">
+            <span class="cmd-prompt">$</span> {opt.command}
+          </code>
+          <button
+            type="button"
+            class="copy-cmd-btn"
+            data-copy={opt.command}
+            aria-label={`Copy command: ${opt.command}`}
+          >
+            <svg class="icon-copy" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="14" height="14" x="8" y="8" rx="2" ry="2"></rect>
+              <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"></path>
+            </svg>
+            <svg class="icon-check" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20 6 9 17l-5-5"></path>
+            </svg>
+            <span class="copy-label">Copy</span>
+          </button>
+        </div>
+        {opt.note && <p class="install-note">{opt.note}</p>}
+      </div>
+    ))}
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('[data-install-tabs]').forEach((root) => {
+    const tabs = root.querySelectorAll('[data-tab]');
+    const panels = root.querySelectorAll('[data-panel]');
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const target = tab.getAttribute('data-tab');
+        tabs.forEach((t) => {
+          const active = t.getAttribute('data-tab') === target;
+          t.classList.toggle('active', active);
+          t.setAttribute('aria-selected', String(active));
+        });
+        panels.forEach((p) => {
+          p.classList.toggle('active', p.getAttribute('data-panel') === target);
+        });
+      });
+    });
+
+    root.querySelectorAll('[data-copy]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const cmd = btn.getAttribute('data-copy') || '';
+        const label = btn.querySelector('.copy-label');
+        try {
+          await navigator.clipboard.writeText(cmd);
+          btn.setAttribute('data-copied', 'true');
+          if (label) label.textContent = 'Copied!';
+          setTimeout(() => {
+            btn.removeAttribute('data-copied');
+            if (label) label.textContent = 'Copy';
+          }, 1800);
+        } catch {
+          if (label) label.textContent = 'Failed';
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+  .install-box {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    margin: 1.5rem 0;
+  }
+
+  .install-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    padding: 0.55rem 0.65rem;
+    background: var(--bg-subtle);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .install-tab {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.48rem 0.85rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.86rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .install-tab:hover {
+    color: var(--text);
+  }
+
+  .install-tab.active {
+    background: var(--bg-elevated);
+    color: var(--text);
+    border-color: var(--border);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tab-pill {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    background: var(--bg-subtle);
+    color: var(--text-muted);
+  }
+
+  .install-tab.active .tab-pill {
+    background: var(--accent-soft);
+    color: var(--accent);
+  }
+
+  .install-panels {
+    padding: 1.25rem;
+  }
+
+  .install-panel {
+    display: none;
+  }
+
+  .install-panel.active {
+    display: block;
+  }
+
+  .cmd-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 1.05rem;
+    border-radius: var(--radius-md);
+    background: var(--bg-code);
+    border: 1px solid var(--border);
+  }
+
+  .cmd-code {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    color: var(--text);
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .cmd-prompt {
+    color: var(--accent);
+    user-select: none;
+    margin-right: 0.35rem;
+    font-weight: 700;
+  }
+
+  .copy-cmd-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
+    padding: 0.45rem 0.8rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border-strong);
+    background: var(--bg-elevated);
+    color: var(--text-secondary);
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .copy-cmd-btn:hover {
+    color: var(--text);
+    border-color: var(--accent);
+  }
+
+  .copy-cmd-btn .icon-check {
+    display: none;
+  }
+
+  .copy-cmd-btn[data-copied='true'] {
+    color: var(--success);
+    border-color: var(--success);
+    background: var(--success-soft);
+  }
+
+  .copy-cmd-btn[data-copied='true'] .icon-copy {
+    display: none;
+  }
+
+  .copy-cmd-btn[data-copied='true'] .icon-check {
+    display: inline;
+  }
+
+  .install-note {
+    margin: 0.75rem 0 0 !important;
+    font-size: 0.84rem;
+    color: var(--text-muted) !important;
+  }
+</style>

@@ -1,0 +1,36 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Installation
+description: Install PMM on Windows, macOS, or Linux using your preferred package manager.
+---
+
+import InstallTabs from '../../components/InstallTabs.astro';
+import Callout from '../../components/Callout.astro';
+
+## Install via Package Manager
+
+Choose your operating system below and copy the install command:
+
+<InstallTabs />
+
+<Callout type="info" title="Building from Source">
+  Because PMM is currently in early development, package manager repositories may not be published yet. You can always build the Java CLI directly from the repository using Maven.
+</Callout>
+
+## Build from Source
+
+Make sure you have **Java (JDK)** and **Maven** installed, then clone and build the project:
+
+```bash
+git clone https://github.com/j00shi/pmm.git
+cd pmm
+mvn package
+```
+
+## Verify Installation
+
+Confirm that `pmm` is available in your `PATH`:
+
+```bash
+pmm --version
+```

@@ -26,6 +26,11 @@ replay_pid*
 # Maven build output
 target/
 
+# Docs (Astro)
+docs/node_modules/
+docs/dist/
+docs/.astro/
+
 # macOS
 .DS_Store
 .AppleDouble

@@ -1,0 +1,94 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: CLI Commands
+description: Reference for PMM commands, global flags, and common usage patterns.
+---
+
+import Callout from '../../components/Callout.astro';
+import CommandCard from '../../components/CommandCard.astro';
+
+Run `pmm` in your terminal to see all available commands and options:
+
+```bash
+pmm [command] [options]
+```
+
+## Global Flags
+
+| Flag | Short | Description |
+| :--- | :--- | :--- |
+| `--help` | `-h` | Display help information for `pmm` or a specific subcommand |
+| `--version` | `-v` | Print the installed PMM version |
+| `--verbose` | | Show detailed output from underlying package managers |
+
+---
+
+## Core Commands
+
+<CommandCard
+  command="pmm scan"
+  summary="Detect local package managers and snapshot installed packages."
+  status="planned"
+>
+  Scans all supported package managers on your current machine and saves a portable package list.
+
+```bash
+# Scan all detected package managers
+pmm scan
+
+# Save snapshot with a custom profile name
+pmm scan --name ubuntu-24.04
+```
+</CommandCard>
+
+<CommandCard
+  command="pmm list"
+  summary="List installed packages across one or more package managers."
+  status="planned"
+>
+  Provides a unified table view of packages installed on your system.
+
+```bash
+# List all tracked packages
+pmm list
+
+# Filter by a specific package manager
+pmm list --manager apt
+```
+</CommandCard>
+
+<CommandCard
+  command="pmm diff <source> [target]"
+  summary="Compare installed packages between two environments or snapshots."
+  status="planned"
+>
+  Highlights packages present in the source snapshot that are missing on your current machine (or target snapshot).
+
+```bash
+# Compare a saved snapshot against your current system
+pmm diff ubuntu-24.04
+
+# Compare two saved snapshots
+pmm diff ubuntu-24.04 fedora-41
+```
+</CommandCard>
+
+<CommandCard
+  command="pmm sync"
+  summary="Install missing packages using the active system package manager."
+  status="planned"
+>
+  Resolves package names for your current OS and installs missing packages. Use `--dry-run` to preview changes first.
+
+```bash
+# Preview what would be installed
+pmm sync --from ubuntu-24.04 --dry-run
+
+# Apply the sync
+pmm sync --from ubuntu-24.04
+```
+</CommandCard>
+
+<Callout type="tip" title="Keeping Docs in Sync">
+  Whenever you add or change a command in the PMM CLI, update this file (`docs/src/pages/guide/commands.mdx`) and change its `status` prop from `"planned"` to `"available"`.
+</Callout>

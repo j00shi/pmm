@@ -1,0 +1,85 @@
+---
+interface Props {
+  command: string;
+  summary: string;
+  status?: 'planned' | 'available';
+}
+
+const { command, summary, status = 'planned' } = Astro.props;
+const anchorId = command.split(' ').slice(0, 2).join('-').toLowerCase().replace(/[^a-z0-9-]/g, '');
+---
+
+<div class="command-card" id={anchorId}>
+  <div class="command-head">
+    <code class="command-sig">{command}</code>
+    <span class:list={['status-badge', `status-${status}`]}>
+      {status === 'available' ? 'Available' : 'Planned'}
+    </span>
+  </div>
+  <p class="command-summary">{summary}</p>
+  <div class="command-details">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .command-card {
+    margin: 1.25rem 0;
+    padding: 1.2rem 1.35rem;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .command-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .command-sig {
+    font-family: var(--font-mono);
+    font-size: 0.98rem;
+    font-weight: 600;
+    color: var(--accent) !important;
+    background: var(--accent-soft) !important;
+    border: 1px solid rgba(56, 189, 248, 0.25) !important;
+    padding: 0.25rem 0.6rem !important;
+    border-radius: var(--radius-sm) !important;
+  }
+
+  .status-badge {
+    font-size: 0.72rem;
+    font-weight: 600;
+    font-family: var(--font-mono);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 0.18rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  .status-available {
+    background: var(--success-soft);
+    color: var(--success);
+  }
+
+  .status-planned {
+    background: var(--warning-soft);
+    color: var(--warning);
+  }
+
+  .command-summary {
+    margin: 0 0 0.75rem !important;
+    color: var(--text) !important;
+    font-weight: 500;
+  }
+
+  .command-details :global(p:last-child),
+  .command-details :global(.code-block-wrapper:last-child) {
+    margin-bottom: 0;
+  }
+</style>

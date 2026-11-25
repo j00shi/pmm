@@ -1,0 +1,361 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import TerminalPreview from '../components/TerminalPreview.astro';
+import InstallTabs from '../components/InstallTabs.astro';
+import { url } from '../utils/url';
+---
+
+<BaseLayout title="PMM — Package Manager Manager">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-glow" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <div class="hero-pill">
+          <span class="pill-dot" aria-hidden="true"></span>
+          <span>Cross-Platform CLI &bull; Early Development</span>
+        </div>
+
+        <h1 class="hero-title">
+          One CLI for all your <span class="gradient-text">package managers</span>.
+        </h1>
+
+        <p class="hero-subtitle">
+          <strong>Package Manager Manager (PMM)</strong> tracks installed packages across
+          <code>winget</code>, <code>brew</code>, <code>apt</code>, and <code>dnf</code> — so
+          switching Linux distributions or setting up a new machine never means guessing what you
+          forgot to install.
+        </p>
+
+        <div class="hero-actions">
+          <a href={url('/guide/getting-started')} class="btn btn-primary">
+            Get Started
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14"></path>
+              <path d="m12 5 7 7-7 7"></path>
+            </svg>
+          </a>
+          <a href={url('/guide/commands')} class="btn btn-secondary">
+            CLI Reference
+          </a>
+        </div>
+
+        <div class="hero-managers" aria-label="Target package managers">
+          <span class="managers-label">Designed for</span>
+          <span class="manager-chip">winget</span>
+          <span class="manager-chip">brew</span>
+          <span class="manager-chip">apt</span>
+          <span class="manager-chip">dnf</span>
+        </div>
+      </div>
+
+      <div class="hero-terminal">
+        <TerminalPreview />
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Install Section -->
+  <section class="section" id="install">
+    <div class="container narrow-container">
+      <div class="section-header">
+        <span class="section-eyebrow">Installation</span>
+        <h2 class="section-title">Up and running in seconds</h2>
+        <p class="section-desc">
+          Pick your platform and copy the install command. See the full
+          <a href={url('/guide/installation')}>installation guide</a> for details.
+        </p>
+      </div>
+
+      <InstallTabs />
+    </div>
+  </section>
+
+  <!-- CLI Overview Section -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header centered">
+        <span class="section-eyebrow">CLI Usage</span>
+        <h2 class="section-title">Simple, composable commands</h2>
+        <p class="section-desc">
+          Built around a small set of predictable commands to inspect, compare, and sync your
+          environment.
+        </p>
+      </div>
+
+      <div class="cmd-grid">
+        <a href={url('/guide/commands#pmm-scan')} class="feature-card">
+          <code class="card-cmd">pmm scan</code>
+          <h3>Snapshot your system</h3>
+          <p>
+            Detect installed packages across all available package managers and export a clean
+            manifest of your current setup.
+          </p>
+        </a>
+
+        <a href={url('/guide/commands#pmm-diff')} class="feature-card">
+          <code class="card-cmd">pmm diff</code>
+          <h3>Compare environments</h3>
+          <p>
+            Switched from Ubuntu to Fedora or moving to a new laptop? Instantly spot which packages
+            are missing on your current machine.
+          </p>
+        </a>
+
+        <a href={url('/guide/commands#pmm-sync')} class="feature-card">
+          <code class="card-cmd">pmm sync</code>
+          <h3>Keep setups consistent</h3>
+          <p>
+            Preview and install missing packages using your active OS package manager with
+            <code>--dry-run</code> safety built in.
+          </p>
+        </a>
+      </div>
+
+      <div class="cta-row">
+        <a href={url('/guide/commands')} class="btn btn-secondary">
+          Explore full CLI documentation →
+        </a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    position: relative;
+    overflow: hidden;
+    padding: 4.5rem 0 4rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-glow {
+    position: absolute;
+    inset: -20% -10% auto;
+    height: 520px;
+    background:
+      radial-gradient(600px circle at 22% 28%, var(--hero-glow-1), transparent 65%),
+      radial-gradient(540px circle at 78% 22%, var(--hero-glow-2), transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .hero-grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.32rem 0.78rem;
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    margin-bottom: 1.25rem;
+  }
+
+  .pill-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--success);
+    box-shadow: 0 0 0 3px var(--success-soft);
+  }
+
+  .hero-title {
+    margin: 0 0 1.15rem;
+    font-size: clamp(2.2rem, 4.4vw, 3.45rem);
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+    color: var(--text);
+  }
+
+  .gradient-text {
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  .hero-subtitle {
+    margin: 0 0 1.85rem;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    max-width: 540px;
+  }
+
+  .hero-subtitle code {
+    font-size: 0.88em;
+    padding: 0.14em 0.38em;
+    border-radius: 5px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+    margin-bottom: 2rem;
+  }
+
+  .hero-managers {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .managers-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-right: 0.25rem;
+  }
+
+  .manager-chip {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    padding: 0.22rem 0.58rem;
+    border-radius: var(--radius-sm);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+
+  .section {
+    padding: 4.25rem 0 1rem;
+  }
+
+  .narrow-container {
+    max-width: 820px;
+  }
+
+  .section-header {
+    margin-bottom: 1.75rem;
+  }
+
+  .section-header.centered {
+    text-align: center;
+    max-width: 620px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 2.5rem;
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.76rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    margin-bottom: 0.45rem;
+  }
+
+  .section-title {
+    margin: 0 0 0.6rem;
+    font-size: clamp(1.55rem, 2.8vw, 2.1rem);
+    font-weight: 700;
+    letter-spacing: -0.025em;
+    color: var(--text);
+  }
+
+  .section-desc {
+    margin: 0;
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .cmd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .feature-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    background: var(--bg-elevated);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
+    color: inherit;
+    transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+  }
+
+  .feature-card:hover {
+    color: inherit;
+    transform: translateY(-2px);
+    border-color: var(--accent);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-cmd {
+    align-self: flex-start;
+    font-family: var(--font-mono);
+    font-size: 0.84rem;
+    font-weight: 600;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-sm);
+    background: var(--accent-soft);
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .feature-card h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.08rem;
+    font-weight: 650;
+    color: var(--text);
+  }
+
+  .feature-card p {
+    margin: 0;
+    font-size: 0.92rem;
+    line-height: 1.6;
+    color: var(--text-secondary);
+  }
+
+  .feature-card code:not(.card-cmd) {
+    font-size: 0.85em;
+    padding: 0.1em 0.35em;
+    border-radius: 4px;
+    background: var(--bg-subtle);
+    border: 1px solid var(--border);
+  }
+
+  .cta-row {
+    margin-top: 2.25rem;
+    text-align: center;
+  }
+
+  @media (max-width: 960px) {
+    .hero {
+      padding: 3rem 0 3rem;
+    }
+
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2.25rem;
+    }
+
+    .cmd-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

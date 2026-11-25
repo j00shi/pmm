@@ -1,0 +1,39 @@
+---
+layout: ../../layouts/DocsLayout.astro
+title: Getting Started
+description: Learn what PMM (Package Manager Manager) is and how it keeps your development environments consistent.
+---
+
+import Callout from '../../components/Callout.astro';
+
+<Callout type="warning" title="Early Development">
+  PMM is currently in active early development. Commands and package distribution channels documented here represent the target CLI design and will evolve as features land.
+</Callout>
+
+## What is PMM?
+
+**Package Manager Manager (PMM)** is a cross-platform CLI tool designed to help developers manage packages across multiple package managers in a unified way.
+
+If you have ever switched Linux distributions or set up a fresh workstation and wondered *"Which tools did I have installed on my previous machine?"*, PMM is built for you.
+
+## Core Goals
+
+- **Unified visibility** — Inspect installed packages across `winget`, `brew`, `apt`, and `dnf` through one consistent CLI.
+- **Effortless distro switching** — Compare your current machine against a previous snapshot to immediately spot missing packages.
+- **Reproducible environments** — Keep your daily CLI tools and dev dependencies aligned across machines.
+
+## Quick Verification
+
+Once PMM is installed, run the CLI without arguments (or with `--help`) to inspect available commands and options:
+
+```bash
+pmm --help
+```
+
+## Adding Documentation Pages
+
+This documentation site is powered by **Astro + MDX**. To add a new documentation page:
+
+1. Create a new `.mdx` file inside `docs/src/pages/guide/`.
+2. Add the page frontmatter with `layout: ../../layouts/DocsLayout.astro`.
+3. Register the page in `docs/src/data/nav.ts` so it appears in the sidebar and pagination.
