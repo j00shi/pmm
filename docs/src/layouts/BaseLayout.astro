@@ -59,7 +59,18 @@ const isDocs = currentPath.startsWith('/guide');
         </a>
 
         <nav class="main-nav" aria-label="Main navigation">
-          <a href={url('/guide/getting-started')} class:list={['nav-link', { active: isDocs && currentPath !== '/guide/commands' }]}>
+          <a
+            href={url('/guide/getting-started')}
+            class:list={[
+              'nav-link',
+              {
+                active:
+                  isDocs &&
+                  currentPath !== '/guide/installation' &&
+                  currentPath !== '/guide/commands',
+              },
+            ]}
+          >
             Docs
           </a>
           <a href={url('/guide/installation')} class:list={['nav-link', { active: currentPath === '/guide/installation' }]}>
